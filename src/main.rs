@@ -3,11 +3,13 @@ extern crate argparse;
 
 mod base58;
 
-use std::io::{
-    self,
-    prelude::*,
+use std::{
+    fs::File,
+    io::{
+        self,
+        prelude::*,
+    }
 };
-use std::fs::File;
 use argparse::{ArgumentParser, StoreTrue, Store};
 use base58::{ToBase58, FromBase58};
 
