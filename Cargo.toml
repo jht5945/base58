@@ -5,3 +5,5 @@ authors = ["Hatter Jiang@Pixelbook <jht5945@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+term = "0.5.2"
+argparse = "0.2.2"
