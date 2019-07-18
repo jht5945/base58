@@ -49,6 +49,47 @@ fn print_message(mt: MessageType, message: &str) {
     println!(" {}", message);
 }
 
+fn encode_base58(read: &mut Read, n: bool) {
+    let mut buffer = Vec::new();
+    match read.read_to_end(&mut buffer) {
+        Err(err) => {
+            print_message(MessageType::ERROR, &format!("Read from stdin failed: {}", err));
+            return;
+        },
+        Ok(_) => (),
+    };
+    print!("{}{}", &buffer.to_base58(), match n { true => "", false => "\n", });
+}
+
+// !FIXME decode base59 always fail.
+fn decode_base58(read: &mut Read, token: &str, n: bool, verbose: bool) {
+    let mut buffer = String::new();
+    match read.read_to_string(&mut buffer) {
+        Err(err) => {
+            print_message(MessageType::ERROR, &format!("Read {} failed: {}", token, err));
+            return;
+        },
+        Ok(_) => (),
+    };
+    if verbose {
+        print_message(MessageType::INFO, &format!("Read content: {}", &buffer));
+    }
+    match buffer.as_str().trim().from_base58() {
+        Err(err) => {
+            print_message(MessageType::ERROR, &format!("Decode base58 from {}, failed: {:?}", token, err));
+            return;
+        },
+        Ok(bs) => {
+            io::stdout().write(bs.as_slice()).unwrap();
+            if ! n {
+                println!();
+            } else {
+                io::stdout().flush().unwrap();
+            }
+        },
+    };
+}
+
 
 fn main() {
     let mut n = false;
@@ -81,41 +122,15 @@ fn main() {
             Ok(f) => f,
         };
         if decode {
-            let mut buffer = String::new();
-            match f.read_to_string(&mut buffer) {
-                Err(err) => {
-                    print_message(MessageType::ERROR, &format!("Read file: {}, failed: {}", &file, err));
-                    return;
-                },
-                Ok(_) => (),
-            };
-            if verbose {
-                print_message(MessageType::INFO, &format!("Read content: {}", &buffer));
-            }
-            match buffer.as_str().trim().from_base58() {
-                Err(err) => {
-                    print_message(MessageType::ERROR, &format!("Decode base58 from file: {}, failed: {:?}", &file, err));
-                    return;
-                },
-                Ok(bs) => {
-                    io::stdout().write(bs.as_slice()).unwrap();
-                    if ! n {
-                        println!();
-                    } else {
-                        io::stdout().flush().unwrap();
-                    }
-                },
-            };
+            decode_base58(&mut f, &format!("file: {}", &file), n, verbose);
         } else {
-            let mut buffer = Vec::new();
-            match f.read_to_end(&mut buffer) {
-                Err(err) => {
-                    print_message(MessageType::ERROR, &format!("Read file: {}, failed: {}", &file, err));
-                    return;
-                },
-                Ok(_) => (),
-            };
-            print!("{}{}", &buffer.to_base58(), match n { true => "", false => "\n", });
+            encode_base58(&mut f, n);
+        }
+    } else {
+        if decode {
+            decode_base58(&mut io::stdin(), "stdin", n, verbose);
+        } else {
+            encode_base58(&mut io::stdin(), n);
         }
     }
 }
