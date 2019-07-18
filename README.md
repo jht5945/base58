@@ -18,7 +18,7 @@ Positional arguments:
 Optional arguments:
   -h,--help             Show this help message and exit
   -d,--decode           Decode data
-  -n                    Do not output the trailing newline
+  --new-line            Do output the trailing newline
   -v,--version          Print version
   --verbose             Verbose output
 ```
