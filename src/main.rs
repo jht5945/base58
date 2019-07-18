@@ -61,7 +61,7 @@ fn encode_base58(read: &mut Read, n: bool) {
     print!("{}{}", &buffer.to_base58(), match n { true => "", false => "\n", });
 }
 
-// !FIXME decode base59 always fail.
+// !FIXME decode base58 always fail.
 fn decode_base58(read: &mut Read, token: &str, n: bool, verbose: bool) {
     let mut buffer = String::new();
     match read.read_to_string(&mut buffer) {
