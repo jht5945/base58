@@ -8,7 +8,7 @@ Usage:
 ```bash
 $ base58 --help
 Usage:
-  ./target/debug/base58 [OPTIONS] [FILE]
+  base58 [OPTIONS] [FILE]
 
 base58 - command line base58 convert tool.
 
