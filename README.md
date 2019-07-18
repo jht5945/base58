@@ -4,6 +4,7 @@
 > based on https://github.com/debris/base58
 
 
+Usage:
 ```bash
 $ base58 --help
 Usage:
