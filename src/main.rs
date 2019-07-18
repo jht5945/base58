@@ -49,7 +49,7 @@ fn print_message(mt: MessageType, message: &str) {
     println!(" {}", message);
 }
 
-fn encode_base58(read: &mut Read, n: bool) {
+fn encode_base58(read: &mut Read, new_line: bool) {
     let mut buffer = Vec::new();
     match read.read_to_end(&mut buffer) {
         Err(err) => {
@@ -58,11 +58,10 @@ fn encode_base58(read: &mut Read, n: bool) {
         },
         Ok(_) => (),
     };
-    print!("{}{}", &buffer.to_base58(), match n { true => "", false => "\n", });
+    print!("{}{}", &buffer.to_base58(), match new_line { false => "", true => "\n", });
 }
 
-// !FIXME decode base58 always fail.
-fn decode_base58(read: &mut Read, token: &str, n: bool, verbose: bool) {
+fn decode_base58(read: &mut Read, token: &str, new_line: bool, verbose: bool) {
     let mut buffer = String::new();
     match read.read_to_string(&mut buffer) {
         Err(err) => {
@@ -81,7 +80,7 @@ fn decode_base58(read: &mut Read, token: &str, n: bool, verbose: bool) {
         },
         Ok(bs) => {
             io::stdout().write(bs.as_slice()).unwrap();
-            if ! n {
+            if new_line {
                 println!();
             } else {
                 io::stdout().flush().unwrap();
@@ -92,7 +91,7 @@ fn decode_base58(read: &mut Read, token: &str, n: bool, verbose: bool) {
 
 
 fn main() {
-    let mut n = false;
+    let mut new_line = false;
     let mut verbose = false;
     let mut decode = false;
     let mut version = false;
@@ -101,7 +100,7 @@ fn main() {
         let mut ap = ArgumentParser::new();
         ap.set_description("base58 - command line base58 convert tool.");
         ap.refer(&mut decode).add_option(&["-d", "--decode"], StoreTrue, "Decode data");
-        ap.refer(&mut n).add_option(&["-n"], StoreTrue, "Do not output the trailing newline");
+        ap.refer(&mut new_line).add_option(&["--new-line"], StoreTrue, "Do output the trailing newline");
         ap.refer(&mut version).add_option(&["-v", "--version"], StoreTrue, "Print version");
         ap.refer(&mut verbose).add_option(&["--verbose"], StoreTrue, "Verbose output");
         ap.refer(&mut file).add_argument("FILE", Store, "FILE");
@@ -122,15 +121,15 @@ fn main() {
             Ok(f) => f,
         };
         if decode {
-            decode_base58(&mut f, &format!("file: {}", &file), n, verbose);
+            decode_base58(&mut f, &format!("file: {}", &file), new_line, verbose);
         } else {
-            encode_base58(&mut f, n);
+            encode_base58(&mut f, new_line);
         }
     } else {
         if decode {
-            decode_base58(&mut io::stdin(), "stdin", n, verbose);
+            decode_base58(&mut io::stdin(), "stdin", new_line, verbose);
         } else {
-            encode_base58(&mut io::stdin(), n);
+            encode_base58(&mut io::stdin(), new_line);
         }
     }
 }
