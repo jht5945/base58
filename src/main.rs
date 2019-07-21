@@ -1,5 +1,5 @@
-extern crate term;
 extern crate argparse;
+extern crate rust_util;
 
 mod base58;
 
@@ -13,6 +13,8 @@ use std::{
 use argparse::{ArgumentParser, StoreTrue, Store};
 use base58::{ToBase58, FromBase58};
 
+use rust_util::*;
+
 const VERSION: &str = "0.1";
 
 fn print_version() {
@@ -22,33 +24,6 @@ License MIT <https://opensource.org/licenses/MIT>
 
 Written by Hatter Jiang
 "#, VERSION);
-}
-
-pub enum MessageType {
-    INFO, OK, WARN, ERROR
-}
-
-fn print_message(mt: MessageType, message: &str) {
-    let mut t = term::stdout().unwrap();
-    match mt {
-        MessageType::OK => {
-            t.fg(term::color::GREEN).unwrap();
-            write!(t, "[OK   ]").unwrap();
-        },
-        MessageType::WARN => {
-            t.fg(term::color::YELLOW).unwrap();
-            write!(t, "[WARN ]").unwrap();
-        },
-        MessageType::ERROR => {
-            t.fg(term::color::RED).unwrap();
-            write!(t, "[ERROR]").unwrap();
-        },
-        MessageType::INFO => {
-            write!(t, "[INFO ]").unwrap();
-        }
-    }
-    t.reset().unwrap();
-    println!(" {}", message);
 }
 
 fn encode_base58(read: &mut Read, new_line: bool) {

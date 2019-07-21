@@ -6,8 +6,8 @@ edition = "2018"
 
 [dependencies]
 num = "*"
-term = "0.5.2"
 argparse = "0.2.2"
+rust_util = { git = "https://github.com/jht5945/rust_util" }
 
 [dev-dependencies]
 rand = "*"
