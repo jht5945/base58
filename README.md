@@ -3,8 +3,12 @@
 
 > based on https://github.com/nham/rust-base58
 
+#### Install
+```bash
+$ cargo install --git https://github.com/jht5945/base58
+```
 
-Usage:
+#### Usage
 ```bash
 $ base58 --help
 Usage:
