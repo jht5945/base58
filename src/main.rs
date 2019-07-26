@@ -66,47 +66,57 @@ fn decode_base58(read: &mut Read, token: &str, new_line: bool, verbose: bool) {
     };
 }
 
+struct Options {
+    version: bool,
+    verbose: bool,
+    decode: bool,
+    new_line: bool,
+    file: String,
+}
+
 
 fn main() {
-    let mut new_line = false;
-    let mut verbose = false;
-    let mut decode = false;
-    let mut version = false;
-    let mut file = String::new();
+    let mut options = Options {
+        version: false,
+        verbose: false,
+        decode: false,
+        new_line: false,
+        file: String::new(),
+    };
     {  // this block limits scope of borrows by ap.refer() method
         let mut ap = ArgumentParser::new();
         ap.set_description("base58 - command line base58 convert tool.");
-        ap.refer(&mut decode).add_option(&["-d", "--decode"], StoreTrue, "Decode data");
-        ap.refer(&mut new_line).add_option(&["--new-line"], StoreTrue, "Do output the trailing newline");
-        ap.refer(&mut version).add_option(&["-v", "--version"], StoreTrue, "Print version");
-        ap.refer(&mut verbose).add_option(&["--verbose"], StoreTrue, "Verbose output");
-        ap.refer(&mut file).add_argument("FILE", Store, "FILE");
+        ap.refer(&mut options.decode).add_option(&["-d", "--decode"], StoreTrue, "Decode data");
+        ap.refer(&mut options.new_line).add_option(&["--new-line"], StoreTrue, "Do output the trailing newline");
+        ap.refer(&mut options.version).add_option(&["-v", "--version"], StoreTrue, "Print version");
+        ap.refer(&mut options.verbose).add_option(&["--verbose"], StoreTrue, "Verbose output");
+        ap.refer(&mut options.file).add_argument("FILE", Store, "FILE");
         ap.parse_args_or_exit();
     }
     
-    if version {
+    if options.version {
         print_version();
         return;
     }
 
-    if file.len() > 0 {
-        let mut f = match File::open(&file) {
+    if options.file.len() > 0 {
+        let mut f = match File::open(&options.file) {
             Err(err) => {
-                print_message(MessageType::ERROR, &format!("Open file: {}, failed: {}", &file, err));
+                print_message(MessageType::ERROR, &format!("Open file: {}, failed: {}", &options.file, err));
                 return;
             },
             Ok(f) => f,
         };
-        if decode {
-            decode_base58(&mut f, &format!("file: {}", &file), new_line, verbose);
+        if options.decode {
+            decode_base58(&mut f, &format!("file: {}", &options.file), options.new_line, options.verbose);
         } else {
-            encode_base58(&mut f, new_line);
+            encode_base58(&mut f, options.new_line);
         }
     } else {
-        if decode {
-            decode_base58(&mut io::stdin(), "stdin", new_line, verbose);
+        if options.decode {
+            decode_base58(&mut io::stdin(), "stdin", options.new_line, options.verbose);
         } else {
-            encode_base58(&mut io::stdin(), new_line);
+            encode_base58(&mut io::stdin(), options.new_line);
         }
     }
 }
