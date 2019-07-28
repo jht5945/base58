@@ -15,7 +15,7 @@ use base58::{ToBase58, FromBase58};
 
 use rust_util::*;
 
-const VERSION: &str = "0.1";
+const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn print_version() {
     print!(r#"base58 {}
