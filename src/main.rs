@@ -84,7 +84,7 @@ fn main() {
         new_line: false,
         file: String::new(),
     };
-    {  // this block limits scope of borrows by ap.refer() method
+    {
         let mut ap = ArgumentParser::new();
         ap.set_description("base58 - command line base58 convert tool.");
         ap.refer(&mut options.decode).add_option(&["-d", "--decode"], StoreTrue, "Decode data");
