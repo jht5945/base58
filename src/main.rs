@@ -1,6 +1,7 @@
 extern crate argparse;
 extern crate rust_util;
 
+mod opt;
 mod base58;
 
 use std::{
@@ -10,9 +11,9 @@ use std::{
         prelude::*,
     }
 };
-use argparse::{ArgumentParser, StoreTrue, Store};
 use base58::{ToBase58, FromBase58};
 
+use opt::*;
 use rust_util::*;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -67,39 +68,10 @@ fn decode_base58(read: &mut Read, token: &str, new_line: bool, verbose: bool) {
     };
 }
 
-struct Options {
-    version: bool,
-    verbose: bool,
-    decode: bool,
-    new_line: bool,
-    file: String,
-}
-
-impl Options {
-    fn new() -> Options {
-        Options {
-            version: false,
-            verbose: false,
-            decode: false,
-            new_line: false,
-            file: String::new(),
-        }
-    }
-}
 
 
 fn main() {
-    let mut options = Options::new();
-    {
-        let mut ap = ArgumentParser::new();
-        ap.set_description("base58 - command line base58 convert tool.");
-        ap.refer(&mut options.decode).add_option(&["-d", "--decode"], StoreTrue, "Decode data");
-        ap.refer(&mut options.new_line).add_option(&["--new-line"], StoreTrue, "Do output the trailing newline");
-        ap.refer(&mut options.version).add_option(&["-v", "--version"], StoreTrue, "Print version");
-        ap.refer(&mut options.verbose).add_option(&["--verbose"], StoreTrue, "Verbose output");
-        ap.refer(&mut options.file).add_argument("FILE", Store, "FILE");
-        ap.parse_args_or_exit();
-    }
+    let options = Options::new_and_parse_args();
     
     if options.version {
         print_version();
