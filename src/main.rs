@@ -75,15 +75,21 @@ struct Options {
     file: String,
 }
 
+impl Options {
+    fn new() -> Options {
+        Options {
+            version: false,
+            verbose: false,
+            decode: false,
+            new_line: false,
+            file: String::new(),
+        }
+    }
+}
+
 
 fn main() {
-    let mut options = Options {
-        version: false,
-        verbose: false,
-        decode: false,
-        new_line: false,
-        file: String::new(),
-    };
+    let mut options = Options::new();
     {
         let mut ap = ArgumentParser::new();
         ap.set_description("base58 - command line base58 convert tool.");
