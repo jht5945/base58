@@ -42,7 +42,7 @@ fn encode_base58(read: &mut dyn Read, options: &Options) {
     if options.verbose {
         print_message(MessageType::DEBUG, "Read input finished.");
     }
-    print!("{}{}", &buffer.to_base58(), match options.new_line { false => "", true => "\n", });
+    print!("{}{}", &buffer.to_base58(), iff!(options.new_line, "\n", ""));
 }
 
 fn decode_base58(read: &mut dyn Read, token: &str, options: &Options) {
