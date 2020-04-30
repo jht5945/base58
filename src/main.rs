@@ -67,6 +67,19 @@ fn decode_base58(read: &mut dyn Read, token: &str, options: &Options) {
     }
 }
 
+fn get_read_in(file: &str) -> Option<Box<dyn Read>> {
+    if file.is_empty() {
+        Some(Box::new(io::stdin()))
+    } else {
+        match File::open(file) {
+            Ok(f) => Some(Box::new(f)), Err(err) => {
+                print_message(MessageType::ERROR, &format!("Open file: {}, failed: {}", file, err));
+                None
+            },
+        }
+    }
+}
+
 
 fn main() {
     let options = Options::new_and_parse_args();
@@ -76,15 +89,8 @@ fn main() {
         return;
     }
 
-    let mut read_in: Box<dyn Read> = if options.file.is_empty() {
-        Box::new(io::stdin())
-    } else {
-        match File::open(&options.file) {
-            Ok(f) => Box::new(f), Err(err) => {
-                print_message(MessageType::ERROR, &format!("Open file: {}, failed: {}", &options.file, err));
-                return;
-            },
-        }
+    let mut read_in  = match get_read_in(&options.file) {
+        Some(r) => r, None => return,
     };
     let hint = iff!(options.file.is_empty(), "stdin".to_owned(), format!("file: {}", &options.file));
 
