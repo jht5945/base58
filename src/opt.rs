@@ -1,4 +1,4 @@
-use argparse::{ArgumentParser, StoreTrue, Store};
+use argparse::{ ArgumentParser, StoreTrue, Store };
 
 pub struct Options {
     pub version: bool,
